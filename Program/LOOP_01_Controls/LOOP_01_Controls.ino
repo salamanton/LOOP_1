@@ -1,0 +1,50 @@
+// Pins
+#define PWM_PIN 3      // PWM-Ausgang für Motor
+#define IN1_PIN 4      // Richtungspin 1
+#define IN2_PIN 5      // Richtungspin 2
+#define SWITCH_POS1 6  // Wippschalter Position 1
+#define SWITCH_POS2 7  // Wippschalter Position 2
+
+// Drehzahlen (PWM-Werte)
+#define SPEED_POSITION1 1000  // Drehzahl für Position 1 (33 1/3 RPM)
+#define SPEED_POSITION2 1364  // Drehzahl für Position 2 (45 RPM)
+
+void setup() {
+  // Motortreiber-Pins
+  pinMode(PWM_PIN, OUTPUT);
+  pinMode(IN1_PIN, OUTPUT);
+  pinMode(IN2_PIN, OUTPUT);
+
+  // Schalter-Pins
+  pinMode(SWITCH_POS1, INPUT);
+  pinMode(SWITCH_POS2, INPUT);
+
+  // Standard: Motor aus
+  digitalWrite(IN1_PIN, LOW);
+  digitalWrite(IN2_PIN, LOW);
+}
+
+void loop() {
+  // Schalter abfragen
+  bool pos1 = digitalRead(SWITCH_POS1);  // Schalterstellung 1
+  bool pos2 = digitalRead(SWITCH_POS2);  // Schalterstellung 2
+
+  // Motorsteuerung basierend auf Schalterstellung
+  if (pos1 && !pos2) {
+    // Position 1: Motor mit SPEED_POSITION1 in entgegengesetzter Richtung
+    analogWrite(PWM_PIN, SPEED_POSITION1);
+    digitalWrite(IN1_PIN, LOW);
+    digitalWrite(IN2_PIN, HIGH);
+  } else if (pos2 && !pos1) {
+    // Position 2: Motor mit SPEED_POSITION2 in entgegengesetzter Richtung
+    analogWrite(PWM_PIN, SPEED_POSITION2);
+    digitalWrite(IN1_PIN, LOW);
+    digitalWrite(IN2_PIN, HIGH);
+  } else {
+    // Position 0: Motor aus
+    analogWrite(PWM_PIN, 0);
+    digitalWrite(IN1_PIN, LOW);
+    digitalWrite(IN2_PIN, LOW);
+  }
+}
+
